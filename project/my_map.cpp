@@ -34,6 +34,10 @@ class node{
     public:
         node(): left(nullptr), right(nullptr), parent(nullptr), color(RED){}
         ~node(){}
+
+        node* find(T_key key, node* root){
+            if
+        }
         
         void left_Rotate(node* x, node* root){
             node* y = x->right;
@@ -125,15 +129,29 @@ class node{
             z->value = value;
 
             if(parent != nullptr){
-                if (parent->key < key) parent->right = z;
-                else parent->left = z;
+                if (parent->key < key){
+                    parent->right = z;
+                    z->parent = parent;
+                }
+                else {
+                    parent->left = z;
+                    z->parent = parent;
+                }
             }else{
                 root = z;
             }
 
+            if(parent == nullptr){
+                return root;
+            }
+
+            if(parent == root){
+                return root;
+            }
+
             RB_insert_balancing(z, root);
 
-            return(root);
+            return root;
         }
 };
 
@@ -147,10 +165,8 @@ class Myiterator{
         Myiterator& operator++(){
             if(curr->right != nullptr){
                 curr = curr->right;
-                cout << "오른쪽으로 이동\n";
                 while(curr->left != nullptr){
                     curr = curr->left;
-                    cout << "왼쪽으로 이동\n";
                 }
             }else{
                 node<T_key, T_value>* parent = curr->parent;
@@ -159,7 +175,6 @@ class Myiterator{
                     parent = parent->parent;
                 }
                 curr = parent;
-                cout << "위로으로 이동\n";
             }
 
             return *this;
@@ -195,12 +210,20 @@ class my_map{
 
         typedef Myiterator<T_key, T_value> iterator;
 
+        void erase(T_key key){
+
+        }
+
+        iterator find(T_key key){
+            return root->find(key, root);
+        }
+        
         iterator begin(){
             node<T_key, T_value>* curr = root;
-            while(root->left != nullptr){
-                root = root->left;
+            while(curr->left != nullptr){
+                curr = curr->left;
             }
-            return iterator(root);
+            return iterator(curr);
         }
 
         iterator end(){
@@ -222,22 +245,36 @@ int main(){
 
     cout << "** First Step **\n";
     m.insert(make_pair("Global", 10));
-    print_map(m);
-    cout << "** First Step **\n";
     m.insert(make_pair("Handong", 30));
-    print_map(m);
-    cout << "** First Step **\n";
     m.insert(make_pair("CSEE", 20));
-    print_map(m);
-    cout << "** First Step **\n";
     m.insert(make_pair("MCNL", 15));
     print_map(m);
 
+    cout << "\n** Second Step **\n";
+    m["Pohang"] = 50;
+    m["Korea"] = 60;
+    print_map(m);
+
+    cout << "\n** Third Step **\n";
+    m["CSEE"] = 100;
+    m.erase("Global");
+    print_map(m);
+
+    cout << "\n** Fourth Step **\n"; 
+    string key = "MCNL";
+    if (m.find(key) != m.end()) {
+        cout << key << " Exists! \n";
+    } 
+    else {
+        cout << key << " does not exist! \n";
+    }
+
+    cout << "\n** Fifth Step **\n"; key = "Yunmin";
+    if (m.find(key) != m.end()){
+        cout << key << "exists! \n";
+    } else {
+        cout << key << "does not exist!\n";
+    }
+
     return 0;
 }
-
-/*
-insert 오류 찾고
-delete 구현하기
-아직 미완성
-*/
